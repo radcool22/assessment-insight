@@ -1,5 +1,6 @@
 import streamlit as st
 from PyPDF2 import PdfReader
+from langchain.text_splitter import RecursiveCharacterTextSplitter
 
 with st.sidebar:
     # The sidebar with additional information about the website
@@ -26,7 +27,12 @@ def main():
         for page in pdf_reader.pages:   
             text += page.extract_text()
 
-        st.write(text)
+        text_splitter = RecursiveCharacterTextSplitter(
+            chunk_size = 1000,
+            chunk_overlap = 200,
+            length_function = len 
+        )
+
 
 if __name__ == "__main__":
     main()
