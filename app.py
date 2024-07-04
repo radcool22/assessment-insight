@@ -9,6 +9,8 @@ from langchain_community.document_loaders import TextLoader
 from langchain.vectorstores import FAISS
 from langchain_text_splitters import CharacterTextSplitter
 
+print('hello world')
+
 with st.sidebar:
     # The sidebar with additional information about the website
     st.title("Chat with Report Cards")
@@ -61,10 +63,16 @@ def main():
             VectorStore = FAISS.from_texts(chunks, embedding=embeddings)
         except TimeoutError as e:
             st.error("Timeout error occurred while creating VectorStore. Please try again later.")
-            
+        
         store_name = pdf.name[:-4]
-        with open(f"{store_name}.pkl", "wb") as f:
-            pickle.dump(VectorStore, f)
+
+        if os.path.exists(f"{store_name}.pkl"):
+            with open(f"{store_name}.pkl", "rb") as f:
+                VectorStore = pickle.load(f)
+            st.write("Embeddings loading from the Disk")
+        else:
+            with open(f"{store_name}.pkl", "wb") as f:
+                pickle.dump(VectorStore, f)
 
 if __name__ == "__main__":
     main()
