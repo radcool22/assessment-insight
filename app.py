@@ -1,18 +1,20 @@
 import os 
+import dill
 import streamlit as st
 from dotenv import load_dotenv
 import pickle 
 from PyPDF2 import PdfReader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.embeddings.openai import OpenAIEmbeddings
+from langchain_openai import OpenAIEmbeddings
 from langchain_community.document_loaders import TextLoader
-from langchain.vectorstores import FAISS
+from langchain_community.vectorstores import FAISS
 from langchain_text_splitters import CharacterTextSplitter
-
-print('hello world')
+from langchain_community.llms import openai
+from langchain.chains.question_answering import load_qa_chain
+from langchain_community.callbacks.manager import get_openai_callback
 
 with st.sidebar:
-    # The sidebar with additional information about the website
+    # The sidebar with additional in formation about the website
     st.title("Chat with Report Cards")
     st.markdown("""
     ## About
@@ -55,14 +57,6 @@ def main():
             length_function = len 
         )
         chunks = text_splitter.split_text(text=text)
-
-        # Creates embeddings for the chunks
-        embeddings = OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY)
-
-        try:
-            VectorStore = FAISS.from_texts(chunks, embedding=embeddings)
-        except TimeoutError as e:
-            st.error("Timeout error occurred while creating VectorStore. Please try again later.")
         
         store_name = pdf.name[:-4]
 
@@ -71,8 +65,26 @@ def main():
                 VectorStore = pickle.load(f)
             st.write("Embeddings loading from the Disk")
         else:
+            embeddings = OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY)
+            try:
+                VectorStore = FAISS.from_texts(chunks, embedding=embeddings)
+            except TimeoutError as e:
+                st.error("Timeout error occurred while creating VectorStore. Please try again later.")
             with open(f"{store_name}.pkl", "wb") as f:
                 pickle.dump(VectorStore, f)
+
+        # Allowing the users to input a question
+        query = st.text_input("Ask questions about your report card: ")
+        st.write(query)
+
+        if query:
+            docs = VectorStore.similarity_search(query=query, k=3)
+            llm = openai(model_name="gpt-3.5-turbo")
+            chain = load_qa_chain(llm=llm, chain_type="stuff")
+            with get_openai_callback() as cb:
+                response = chain.run(input_documents=docs, question=query)
+                print(cb)
+            st.write(response)
 
 if __name__ == "__main__":
     main()
