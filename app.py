@@ -27,7 +27,8 @@ def main():
     # Prints the name of the product
     st.header("Assessment Insight")
     load_dotenv()
-    OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
+    OPENAI_API_KEY = "sk-proj-u4TwE9KzXG7JWK2bT02dT3BlbkFJXJg8c3mncx32B1G8s90P"
+    #OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
 
     # Creates embeddings for the chunks
     embeddings = OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY)
