@@ -1,4 +1,5 @@
 import os 
+import dill
 import streamlit as st
 from dotenv import load_dotenv
 import pickle 
@@ -60,7 +61,7 @@ def main():
         
         store_name = pdf.name[:-4]
 
-        if os.path.exists(f"{store_name}.pkl") and os.path.getsize(f"{store_name}.pkl") > 0:
+        if os.path.exists(f"{store_name}.pkl"):
             with open(f"{store_name}.pkl", "rb") as f:
                 VectorStore = pickle.load(f)
             st.write("Embeddings loading from the Disk")
@@ -75,6 +76,7 @@ def main():
 
         # Allowing the users to input a question
         query = st.text_input("Ask questions about your report card: ")
+        st.write(query)
 
         if query:
             docs = VectorStore.similarity_search(query=query, k=3)
@@ -82,6 +84,7 @@ def main():
             chain = load_qa_chain(llm=llm, chain_type="stuff")
             with get_openai_callback() as cb:
                 response = chain.run(input_documents=docs, question=query)
+                print(cb)
             st.write(response)
 
 if __name__ == "__main__":
