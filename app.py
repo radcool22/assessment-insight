@@ -1,5 +1,4 @@
-import os 
-import dill
+import os
 import streamlit as st
 from dotenv import load_dotenv
 import pickle 
@@ -10,6 +9,8 @@ from langchain_community.document_loaders import TextLoader
 from langchain_community.vectorstores import FAISS
 from langchain_text_splitters import CharacterTextSplitter
 from langchain_community.llms import openai
+from langchain_community.agent_toolkits.load_tools import load_tools
+from langchain.agents import initialize_agent
 from langchain.chains.question_answering import load_qa_chain
 from langchain_community.callbacks.manager import get_openai_callback
 
@@ -26,10 +27,9 @@ with st.sidebar:
 
 def main():
     # Prints the name of the product
-    st.header("Assessment Insight")
+    st.header("IB-Xpert")
     load_dotenv()
-    OPENAI_API_KEY = "sk-proj-u4TwE9KzXG7JWK2bT02dT3BlbkFJXJg8c3mncx32B1G8s90P"
-    #OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
+    OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
 
     # Creates embeddings for the chunks
     embeddings = OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY)
@@ -74,9 +74,9 @@ def main():
             with open(f"{store_name}.pkl", "wb") as f:
                 pickle.dump(VectorStore, f)
 
+
         # Allowing the users to input a question
         query = st.text_input("Ask questions about your report card: ")
-        st.write(query)
 
         if query:
             docs = VectorStore.similarity_search(query=query, k=3)
@@ -86,6 +86,13 @@ def main():
                 response = chain.run(input_documents=docs, question=query)
                 print(cb)
             st.write(response)
+
+def web_search():
+    llm = openai(model_name="gpt-3.5-turbo")
+    #llm = openai(temperature=0.2)
+    tools = load_tools(["serpapi"], llm=llm)
+    agent = initialize_agent(tools, llm, agent="zero-shot-react-description", verbose=True)
+    agent.run("What was the score between India and South Africa in the world cup final?")
 
 if __name__ == "__main__":
     main()
