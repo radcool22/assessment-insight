@@ -44,6 +44,16 @@ def main():
     # Lets the user upload a PDF report
     pdf = st.file_uploader("Upload your report card here", type="pdf")
 
+    if pdf is None:
+        load_dotenv()
+        OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")   
+        SERPAPI_API_KEY = os.environ.get("SERPAPI_API_KEY")
+        query = st.text_input("Ask questions about your report card: ")
+        llm = openai.OpenAI(temperature=0.2)
+        tools = load_tools(["serpapi"], llm=llm)
+        agent = initialize_agent(tools, llm, asent="zero-shot-react-description", verbose=True, source="https://www.pathwaysgurgaon.edu.in/results/dp, https://www.ibo.org/programmes/diploma-programme/")
+        st.write(agent.run(query))
+
     if pdf is not None:
         pdf_reader = PdfReader(pdf)
 
@@ -80,7 +90,7 @@ def main():
 
         if query:
             docs = VectorStore.similarity_search(query=query, k=3)
-            llm = openai(model_name="gpt-3.5-turbo")
+            llm = openai.OpenAI(model_name="gpt-3.5-turbo")
             chain = load_qa_chain(llm=llm, chain_type="stuff")
             with get_openai_callback() as cb:
                 response = chain.run(input_documents=docs, question=query)
@@ -88,11 +98,13 @@ def main():
             st.write(response)
 
 def web_search():
-    llm = openai(model_name="gpt-3.5-turbo")
-    #llm = openai(temperature=0.2)
+    load_dotenv()
+    OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")   
+    SERPAPI_API_KEY = os.environ.get("SERPAPI_API_KEY")
+    llm = openai.OpenAI(temperature=0.2)
     tools = load_tools(["serpapi"], llm=llm)
-    agent = initialize_agent(tools, llm, agent="zero-shot-react-description", verbose=True)
-    agent.run("What was the score between India and South Africa in the world cup final?")
+    agent = initialize_agent(tools, llm, asent="zero-shot-react-description", verbose=True, source="https://www.pathwaysgurgaon.edu.in/results/dp")
+    st.write(agent.run("What was the name of the student with 44 points in IBDP 2023 of Pathways School Gurgaon in India."))
 
 if __name__ == "__main__":
     main()
