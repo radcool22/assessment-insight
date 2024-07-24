@@ -22,79 +22,81 @@ with st.sidebar:
     . This app was creating by using Streamlit, OpenAI, and Langchain.
     """)
     st.write("Made by Kabir Gupta")
+    OPENAI_API_KEY = st.text_input("OpenAI API Key", type="password")
+    "[Get an OpenAI API key](https://platform.openai.com/account/api-keys)"
 
 def main(prompt):
     st.header("🤖 IB-Xpert 📚📄")
-    load_dotenv()
-    OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")   
+    load_dotenv()  
     SERPAPI_API_KEY = os.environ.get("SERPAPI_API_KEY")
 
     pdf = st.file_uploader("Upload your report card here", type="pdf")
     query = st.text_input("Ask a question about IB or your report: ")
 
-    def web_query():
-        llm = openai.OpenAI(temperature=0.5)
-        tools = load_tools(["serpapi"], llm=llm)
-        if "pathways" in query.lower():
-            agent = initialize_agent(tools, llm,
-                                    asent="zero-shot-react-description",
-                                    verbose=True,
-                                    source="https://www.pathwaysgurgaon.edu.in/results/dp")
-        elif "woodstock" in query.lower():
-            agent = initialize_agent(tools, llm,
-                                    asent="zero-shot-react-description",
-                                    verbose=True,
-                                    source="https://www.woodstockschool.in/")
-        answer = agent.run(query)   
-        st.write(answer)
+    if OPENAI_API_KEY:
+        def web_query():
+            llm = openai.OpenAI(temperature=0.5)
+            tools = load_tools(["serpapi"], llm=llm)
+            if "pathways" in query.lower():
+                agent = initialize_agent(tools, llm,
+                                        asent="zero-shot-react-description",
+                                        verbose=True,
+                                        source="https://www.pathwaysgurgaon.edu.in/results/dp")
+            elif "woodstock" in query.lower():
+                agent = initialize_agent(tools, llm,
+                                        asent="zero-shot-react-description",
+                                        verbose=True,
+                                        source="https://www.woodstockschool.in/")
+            answer = agent.run(query)   
+            st.write(answer)
 
-    def ib_query():
-        response = openai_original.chat.completions.create(
-            model="gpt-3.5-turbo",
-            messages = [{"role": "user", "content": query}]
-        )
-
-        answer = response.choices[0].message.content.strip()
-        st.write(answer)
-
-    def doc_query():
-        if pdf is not None:
-            pdf_reader = PdfReader(pdf)
-            text = ""
-            for page in pdf_reader.pages:
-                text += page.extract_text()
-
-            # Splits the text into readable chunks
-            text_splitter = RecursiveCharacterTextSplitter(
-                separators="\n",
-                chunk_size = 1000,
-                chunk_overlap = 200,
-                length_function = len 
+        def ib_query():
+            openai_instance = openai_original.OpenAI(api_key=OPENAI_API_KEY)
+            response = openai_instance.chat.completions.create(
+                model="gpt-3.5-turbo",
+                messages = [{"role": "user", "content": query}]
             )
-            chunks = text_splitter.split_text(text)
-            embeddings = OpenAIEmbeddings()
-            vectorstore = FAISS.from_texts(chunks, embeddings)
+            answer = response.choices[0].message.content.strip()
+            st.write(answer)
 
-            if query:
-                docs = vectorstore.similarity_search(query=query, k=3)
-                llm = openai.OpenAI()
-                chain = load_qa_chain(llm=llm, chain_type="stuff")
-                with get_openai_callback() as cb:
-                    response = chain.run(input_documents=docs, question=query)
-                    print(cb)
-                st.write(response)
+        def doc_query():
+            if pdf is not None:
+                pdf_reader = PdfReader(pdf)
+                text = ""
+                for page in pdf_reader.pages:
+                    text += page.extract_text()
 
-    if pdf:
-        print("Calling doc_query()")
-        doc_query()
-    elif "woodstock" in query.lower() or "pathways" in query.lower():
-        print("Calling web_query()")
-        web_query()
-    elif query:
-        print("Calling ib_query()")
-        ib_query()
+                # Splits the text into readable chunks
+                text_splitter = RecursiveCharacterTextSplitter(
+                    separators="\n",
+                    chunk_size = 1000,
+                    chunk_overlap = 200,
+                    length_function = len 
+                )
+                chunks = text_splitter.split_text(text)
+                embeddings = OpenAIEmbeddings(api_key=OPENAI_API_KEY)
+                vectorstore = FAISS.from_texts(chunks, embeddings)
+
+                if query:   
+                    docs = vectorstore.similarity_search(query=query, k=3)
+                    llm = openai.OpenAI(api_key=OPENAI_API_KEY)
+                    chain = load_qa_chain(llm=llm, chain_type="stuff")
+                    with get_openai_callback() as cb:
+                        response = chain.run(input_documents=docs, question=query)
+                        print(cb)
+                    st.write(response)
+
+        if pdf:
+            doc_query()
+        elif "woodstock" in query.lower() or "pathways" in query.lower():
+            web_query()
+        elif query:
+            ib_query()
+        else:
+            print("Loading....")
     else:
-        print("Loading....")
+        st.info("Please add your OpenAI key to continue")
+        st.stop()
 
 if __name__ == "__main__":
     prompt = """
