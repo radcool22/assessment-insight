@@ -5,12 +5,12 @@ import openai as openai_original
 from PyPDF2 import PdfReader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.embeddings import OpenAIEmbeddings
-from langchain_community.llms import openai
-from langchain_community.vectorstores import FAISS
-from langchain_community.agent_toolkits.load_tools import load_tools
+from langchain.llms import openai
+from langchain.vectorstores import FAISS
+from langchain.agents import load_tools
 from langchain.agents import initialize_agent
 from langchain.chains.question_answering import load_qa_chain
-from langchain_community.callbacks.manager import get_openai_callback
+from langchain.callbacks.manager import get_openai_callback
 
 with st.sidebar:
     st.title("Chat with Report Cards")
