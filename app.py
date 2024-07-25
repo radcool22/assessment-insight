@@ -6,9 +6,7 @@ from PyPDF2 import PdfReader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_openai import OpenAIEmbeddings
 from langchain_community.llms import openai
-from langchain_community.document_loaders import TextLoader
 from langchain_community.vectorstores import FAISS
-from langchain_text_splitters import CharacterTextSplitter
 from langchain_community.agent_toolkits.load_tools import load_tools
 from langchain.agents import initialize_agent
 from langchain.chains.question_answering import load_qa_chain
