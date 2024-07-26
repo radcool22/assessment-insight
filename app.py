@@ -71,7 +71,7 @@ def main(prompt):
                     length_function = len 
                 )
                 chunks = text_splitter.split_text(text)
-                embeddings = OpenAIEmbeddings(api_key=OPENAI_API_KEY)
+                embeddings = OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY)
                 vectorstore = FAISS.from_texts(chunks, embeddings)
 
                 if query:
