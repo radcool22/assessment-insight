@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 import openai as openai_original
 from PyPDF2 import PdfReader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.embeddings import OpenAIEmbeddings
+from langchain_community.embeddings import OpenAIEmbeddings
 from langchain.llms import openai
 from langchain.vectorstores import FAISS
 from langchain.agents import load_tools
@@ -72,6 +72,7 @@ def main(prompt):
                 )
                 chunks = text_splitter.split_text(text)
                 embeddings = OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY)
+                print(chunks)
                 vectorstore = FAISS.from_texts(chunks, embeddings)
 
                 if query:
