@@ -32,7 +32,7 @@ def main(prompt):
 
     if OPENAI_API_KEY:
         def web_query():
-            llm = openai.OpenAI(temperature=0.5)
+            llm = openai.OpenAI(temperature=0.5, api_key=OPENAI_API_KEY)
             tools = load_tools(["serpapi"], llm=llm)
             if "pathways" in query.lower():
                 agent = initialize_agent(tools, llm,
@@ -74,7 +74,7 @@ def main(prompt):
                 embeddings = OpenAIEmbeddings(api_key=OPENAI_API_KEY)
                 vectorstore = FAISS.from_texts(chunks, embeddings)
 
-                if query:   
+                if query:
                     docs = vectorstore.similarity_search(query=query, k=3)
                     llm = openai.OpenAI(api_key=OPENAI_API_KEY)
                     chain = load_qa_chain(llm=llm, chain_type="stuff")
