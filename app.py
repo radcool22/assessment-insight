@@ -32,7 +32,7 @@ def main(prompt):
 
     if OPENAI_API_KEY:
         def web_query():
-            llm = openai.OpenAI(temperature=0.5, api_key=OPENAI_API_KEY)
+            llm = openai.OpenAI(api_key=OPENAI_API_KEY)
             tools = load_tools(["serpapi"], llm=llm)
             if "pathways" in query.lower():
                 agent = initialize_agent(tools, llm,
