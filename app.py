@@ -13,7 +13,7 @@ from langchain.chains.question_answering import load_qa_chain
 from langchain.callbacks.manager import get_openai_callback
 
 with st.sidebar:
-    st.title("AI-Powered Insights on IB Reports")
+    st.title("AI-Powered Insights on the IB and Assessment Reports")
     st.markdown("""
     ## About
     Hi! I am a student currently in Grade 10. This app is a way for students and parents to easily be able to understand the IB and their report cards.
