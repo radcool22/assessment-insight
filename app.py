@@ -13,19 +13,18 @@ from langchain.chains.question_answering import load_qa_chain
 from langchain.callbacks.manager import get_openai_callback
 
 with st.sidebar:
-    st.title("Chat with Report Cards")
+    st.title("AI-Powered Insights on IB Reports")
     st.markdown("""
     ## About
-    Hi! I am a student studying in Woodstock School 
-    . This app was creating by using Streamlit, OpenAI, and Langchain.
+    Hi! I am a student currently in Grade 10. This app is a way for students and parents to easily be able to understand the IB and their report cards.
     """)
     st.write("Made by Kabir Gupta")
     OPENAI_API_KEY = st.text_input("OpenAI API Key", type="password")
     "[Get an OpenAI API key](https://platform.openai.com/account/api-keys)"
 
 def main(prompt):
-    st.header("🤖 IB-Xpert 📚📄")
-    load_dotenv()  
+    st.header("📚 IB-Xpert 📄")
+    load_dotenv()
     SERPAPI_API_KEY = os.environ.get("SERPAPI_API_KEY")
 
     pdf = st.file_uploader("Upload your report card here", type="pdf")
