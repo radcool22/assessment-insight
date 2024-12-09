@@ -8,7 +8,7 @@ from langchain_community.embeddings import OpenAIEmbeddings
 from langchain_community.llms import openai
 from langchain_community.vectorstores import FAISS
 from langchain_community.agent_toolkits.load_tools import load_tools
-from langchain.agents import initialize_agent
+from langchain.agents import initialize_agent   
 from langchain.chains.question_answering import load_qa_chain
 from langchain_community.callbacks.manager import get_openai_callback
 
@@ -16,11 +16,12 @@ with st.sidebar:
     st.title("AI-Powered Insights on the IB and Assessment Reports")
     st.markdown("""
     ## About
-    Hi! I am a student currently in Grade 10. This app is a way for students and parents to easily be able to understand the IB and their report cards.
+    Hi! I am a student currently in Grade 10. 
+    This app is a way for students and parents to easily 
+    be able to understand the IB and their report cards.
     """)
     st.write("Made by Kabir Gupta")
-    OPENAI_API_KEY = st.text_input("OpenAI API Key", type="password")
-    "[Get an OpenAI API key](https://platform.openai.com/account/api-keys)"
+    OPENAI_API_KEY = "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"
 
 def main(prompt):
     st.header("📚 IB-Xpert 📄")
@@ -63,7 +64,7 @@ def main(prompt):
                 for page in pdf_reader.pages:
                     text += page.extract_text()
 
-                # Splits the text into readable chunks
+                # This line Splits the text into readable chunks
                 text_splitter = RecursiveCharacterTextSplitter(
                     separators="\n",
                     chunk_size = 1000,
@@ -101,12 +102,15 @@ if __name__ == "__main__":
     1. Act like an International Baccalaureate counselor. 
     2. You should know everything about the IB. 
     3. Refer to official IB websites.
-    4. You have to explain and answers questions about IB concepts to a parent or a student in simple terms without any fancy jargon or words and connect it with the IB vocabulary. 
+    4. You have to explain and answers questions about IB concepts to a parent or a student 
+    in simple terms without any fancy jargon or words and connect it with the IB vocabulary. 
     5. Use extremely simple language to convey the definition. 
     6. Always provide short and concise answers instead of lengthy ones. 
     7. The output should not exceed 200-300 words.  
     8. Avoid excessive bullet points and prioritize concise paragraphs. 
-    9. Your role is to assess a students performance based on a report card and give them advice on their performance and provide strengths and weaknesses and grade their assessment and provide their summary in a readable manner. 
+    9. Your role is to assess a students performance based on a report card and give them 
+    advice on their performance and provide strengths and weaknesses and grade their assessment and 
+    provide their summary in a readable manner. 
     10. You should be able to help the student to understand and improve based on the report uploaded.
     """
     main(prompt)
