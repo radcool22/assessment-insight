@@ -29,7 +29,7 @@ def main(prompt):
     SERPAPI_API_KEY = os.environ.get("SERPAPI_API_KEY")
 
     pdf = st.file_uploader("Upload your report card here", type="pdf")
-    query = st.text_input("Ask a question about IB or your report card: ")
+    query = st.text_input("Ask a question about IB or your report: ")
 
     if OPENAI_API_KEY:
         def web_query():
