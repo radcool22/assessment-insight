@@ -49,7 +49,7 @@ def main(prompt):
             st.write(answer)
 
         def ib_query():
-            openai_instance = openai_original.OpenAI(api_key=OPENAI_API_KEY)
+            openai_instance = openai.OpenAI(api_key=OPENAI_API_KEY)
             response = openai_instance.chat.completions.create(
                 model="gpt-3.5-turbo",
                 messages = [{"role": "user", "content": query}]
