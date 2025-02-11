@@ -29,7 +29,7 @@ def main(prompt):
     SERPAPI_API_KEY = os.environ.get("SERPAPI_API_KEY")
 
     pdf = st.file_uploader("Upload your report card here", type="pdf")
-    query = st.text_input("Ask a question about IB or your report: ")
+    query = st.text_input("Ask a question about IB or your report card: ")
 
     if OPENAI_API_KEY:
         def web_query():
@@ -64,7 +64,7 @@ def main(prompt):
                 for page in pdf_reader.pages:
                     text += page.extract_text()
 
-                # This line Splits the text into readable chunks
+                # This line splits the text into readable chunks
                 text_splitter = RecursiveCharacterTextSplitter(
                     separators="\n",
                     chunk_size = 1000,
