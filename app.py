@@ -5,7 +5,6 @@ import openai as openai_original
 from PyPDF2 import PdfReader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.embeddings import OpenAIEmbeddings
-from langchain_community.llms import openai
 from langchain_community.vectorstores import FAISS
 from langchain_community.agent_toolkits.load_tools import load_tools
 from langchain.agents import initialize_agent   
@@ -77,7 +76,7 @@ def main(prompt):
 
                 if query:
                     docs = vectorstore.similarity_search(query=query, k=3)
-                    llm = openai.OpenAI(api_key=OPENAI_API_KEY)
+                    llm = openai_original.OpenAI(api_key=OPENAI_API_KEY)
                     chain = load_qa_chain(llm=llm, chain_type="stuff")
                     with get_openai_callback() as cb:
                         response = chain.run(input_documents=docs, question=query)
