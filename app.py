@@ -21,7 +21,7 @@ with st.sidebar:
     be able to understand the IB and their report cards.
     """)
     st.write("Made by Kabir Gupta")
-    OPENAI_API_KEY = "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"
+    OPENAI_API_KEY = int(st.text_input("Enter your API key: "))
 
 def main(prompt):
     st.header("📚 IB-Xpert 📄")
